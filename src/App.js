@@ -64,8 +64,10 @@ function Home() {
       <br />
       <Link to="/oup1">데이터 출력</Link>
       <br />
+
       <h4>Axios</h4>
-      <Link to="/ax1" AXIOS 사용 ></Link><br/>
+      <Link to="/ax1">AXIOS 사용</Link><br/>
+      
       <h4>과제</h4>
       <Link to="/pro1">회원가입 창</Link>
     </div>
