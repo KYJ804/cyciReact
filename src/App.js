@@ -1,77 +1,73 @@
 import './App.css';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import React, { createContext, useState } from 'react';
 
-// 컴포넌트 import
-import Calc1 from './comp/calc/study01';
-import Inp1 from './comp/inp/input01';
-import Oup1 from './comp/inp/output01';
-import ProJoin from './comp/pro/Join.js';
+import Calc1 from './comp/calc/study01'
 
-import Ax1 from './comp/ax/ax01';
+import Inp1 from './comp/inp/input01'
+import Oup1 from './comp/inp/output01'
+import Ref from './comp/inp/Ref01'
 
-// Context 생성
-export const UserContext = createContext();
+import ProJoin from './comp/pro/Join'
+
+import Ax1 from './comp/ax/ax01'
+
+import Login from './comp/pro/Login'; // Login 컴포넌트 import
 
 function App() {
-  const [userData, setUserData] = useState({
-    아이디: '',
-    비밀번호: '',
-    이메일주소: '',
-    성별: '',
-    학년: '',
-    취미: [],
-  });
-
   return (
-    <UserContext.Provider value={{ userData, setUserData }}>
-      <div className="App">
-        <BrowserRouter>
-          <About />
-          <Routes>
-            <Route path={"/"} element={<Home />} />
-            <Route path={"/about"} element={<About />} />
-            <Route path={"/cal1"} element={<Calc1 />} />
-            <Route path={"/inp1"} element={<Inp1 />} />
-            <Route path={"/oup1"} element={<Oup1 />} />
-            <Route path={"/pro1"} element={<ProJoin />} />
-            <Route path={"/ax1"} element={<Ax1 />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </UserContext.Provider>
+    <div className="App">
+      <BrowserRouter>
+        <About />
+        <Routes>
+          <Route path={"/"} element={<Home />} />
+          <Route path={"/about"} element={<About />} />
+          <Route path={"/cal1"} element={<Calc1 />} />
+
+          <Route path={"/inp1"} element={<Inp1 />} />
+          <Route path={"/oup1"} element={<Oup1 />} />
+          <Route path={"/ref1"} element={<Ref />} />
+
+          <Route path={"/pro1"} element={<ProJoin />} />
+
+          <Route path={"/ax1"} element={<Ax1 />} />
+
+          <Route path={"/login"} element={<Login />} /> {/* 로그인 경로 추가 */}
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
 function About() {
   return (
-    <div style={{ border: '2px blue solid' }}>
+    <div style={{border: '2px blue solid'}}>
       <Link to="/">Home으로 이동</Link>
     </div>
-  );
+  )
 }
 
 function Home() {
-  return (
+  return(
     <div>
       <h1>Start Home</h1>
-      <Link to="/about">About으로 이동</Link>
-      <br />
-      <Link to="/cal1">Cal1로 이동하기</Link>
-      <br />
+      <Link to="/about">About으로 이동</Link><br/>
+      <Link to="/cal1">Cal1로 이동하기</Link><br/>
+
       <h4>데이터 옮기기</h4>
-      <Link to="/inp1">데이터 입력</Link>
-      <br />
-      <Link to="/oup1">데이터 출력</Link>
-      <br />
+      <Link to="/inp1">데이터 입력</Link><br/>
+      <Link to="/oup1">데이터 출력</Link><br/>
+      <Link to='/ref1'>Ref 사용하기</Link>
 
       <h4>Axios</h4>
       <Link to="/ax1">AXIOS 사용</Link><br/>
-      
+
       <h4>과제</h4>
-      <Link to="/pro1">회원가입 창</Link>
+      <Link to="/pro1">회원가입 창</Link><br/>
+
+      <h4>로그인</h4>
+      <Link to="/login">로그인 창</Link> {/* 로그인 링크 추가 */}
     </div>
-  );
+  )
 }
 
 export default App;

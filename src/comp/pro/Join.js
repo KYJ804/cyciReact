@@ -1,203 +1,163 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { memberIdCheck, areaList, memberRegist } from '../api/member'
 
 function Study() {
-  const [아이디, 확인아이디] = useState('');
-  const [비밀번호, 확인비밀번호] = useState('');
-  const [이메일주소, 확인이메일] = useState('');
-  const [성별, 확인성별] = useState('');
-  const [sel, setSel] = useState('1학년');
 
-  const hobbyList = [
-    { name: '독서' },
-    { name: '악기연주' },
-    { name: '프라모델 조립' },
-    { name: '자기' },
-    { name: '여행' }
-  ];
+  const [아이디, 변경아이디] = useState('');        //아이디 입력
+  const [password, setPassword] =  useState('');  //비밀번호 입력
+  const [name, setName] = useState('');           //이름 입력
+  const [email, setEmail] = useState('');         //이메일 입력
+  const [gender, setGender] = useState('M');      //성별 ( 기본값: 남자 )
+  const [birth, setBirth] = useState('');         //생년 월일
+  const [area, setArea] = useState('');           //지역
 
-  const [hobby, setHobby] = useState([]);
+  const  [idChk, setIdk] = useState('');          //중복체크 아이디
 
-  const handleHobbyChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setHobby((prevHobbies) => [...prevHobbies, value]);
-    } else {
-      setHobby((prevHobbies) => prevHobbies.filter((h) => h !== value));
+  const [areas, setAreas] = useState([]);       //지역 리스트
+
+  const idRef = useRef();                       // 아이디 ( 주소, 테그 )
+
+  //화면이 처음 출력 되었을 때, list에 어떻게 표현 시킬 것인가?
+  
+
+  useEffect(() => {
+    startList();
+  }, []); // 페이지가 처음으로 불러오는 현상 ( 마운트 ) 이 때만 동작 되게 해달라!
+
+
+  //랜더링이 더 이상 ( 개발자가 생각한 외에 발생 될 시 )
+  // useEffect, useMemo, useCallBack 이 부분을 추가!!!! 없으면 그냥 건들지 마세요.!
+  // 위의 기능들은 랜더를 억제하는 것을 목적!!! 많으면 많을수록 사이트가 느려집니다.
+  function startList() {
+    console.log('=== startList');
+    areaList()
+    .then(res => {
+      setAreas(res.data.data);            // select 지역리스트 추가
+      setArea(res.data.data[0].idx);      // 지역코드 기본값 ( 첫 번재 index )
+    })
+  }
+
+  /**
+   * 회원가입 시 동작 되도록!
+   */
+  function joinAction() {
+
+    //유효성 검사!
+    if(아이디.trim().length == 0 || 아이디  !== idChk) {
+      alert('아이디 중복 체크부터 해주세요.');
+      return ;
     }
-  };
 
+    //JavaScript 유효성 검사 코드
+
+    //값 담는다.
+    const obj = {
+      'userId': 아이디,
+      'userPw': password,
+      'userName': name,  
+      'email': email,
+      'birth': birth,
+      'gender': gender,
+      'areaIdx': area
+    }
+
+    console.log(obj);
+    memberRegist(obj)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log('err: ', err);
+      console.log(`err:  ${err}`);
+    })
+  }
+ 
   return (
-    <>
-      <style>
-        {`
-          body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #333;
-          }
+    <div className="App">
+      {/* 아이디 */}
+      <input 
+        type='text'
+        placeholder='아이디 입력'
+        ref={idRef}
+        value={아이디}
+        onChange={e=> {
+          변경아이디(e.target.value);
+        }}
+      />
+      <input type='button' value='중복 체크' onClick={
+        () => {
+          let obj = new  Object();
+          obj.id = 아이디;
 
-          .App {
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 400px;
-          }
+          const check = memberIdCheck(obj);
 
-          h1, h4 {
-            color: #444;
-            margin-bottom: 20px;
-          }
+          //성공!
+          check.then(res => {
+            setIdk(아이디);
+            idRef.current.disabled = true;
+          })
 
-          input[type='text'],
-          input[type='password'],
-          select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s;
-          }
+          //실패
+          check.catch(err => {
+            console.log(err);
+          })
+        }
+      }/><br/>
 
-          input[type='text']:focus,
-          input[type='password']:focus,
-          select:focus {
-            border-color: #ff758c;
-            outline: none;
-          }
 
-          input[type='button'] {
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            transition: background 0.3s, transform 0.2s;
-          }
+      <input
+        type="password"
+        placeholder='비밀번호 입력'
+        value={password}
+        onChange={
+          e=>setPassword(e.target.value)
+        }
+      /><br/>
+      <input 
+        type="text"
+        placeholder='이름 입력해주세요.'
+        value={name}
+        onChange={e=> setName(e.target.value)}
+        /><br/>
+      <input
+        type="email"
+        placeholder='이메일 입력해주세요.'
+        value={email}
+        onChange={e=>setEmail(e.target.value)}
+        /><br/>
+      <input
+        type="radio"
+        name="gender"
+        value="M"  checked
+        onChange={e=> {
+          setGender(e.target.value)
+        }} />남자
+      <input
+        type="radio"
+        name="gender"
+        value="F"
+        onChange={e=> {
+          setGender(e.target.value)
+        }} />여자<br/>
+      생년월일 <input
+        type="date"
+        value={birth}
+        onChange={e=>{setBirth(e.target.value)}}
+        /> <br/>
 
-          input[type='button']:hover {
-            background: linear-gradient(135deg, #ff6a8e, #ff6093);
-            transform: scale(1.05);
-          }
 
-          input[type='radio'],
-          input[type='checkbox'] {
-            margin-right: 10px;
-          }
-
-          label {
-            margin-bottom: 15px;
-            display: block;
-            font-size: 14px;
-            color: #666;
-          }
-
-          div {
-            margin-bottom: 10px;
-          }
-
-          h1 {
-            font-size: 24px;
-            text-align: center;
-          }
-        `}
-      </style>
-      <div className="App">
-        <h1>회원가입</h1>
-        <input
-          type="text"
-          placeholder="아이디"
-          value={아이디}
-          onChange={(e) => 확인아이디(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={비밀번호}
-          onChange={(e) => 확인비밀번호(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="이메일주소"
-          value={이메일주소}
-          onChange={(e) => 확인이메일(e.target.value)}
-        />
-
-        <h4>성별</h4>
-        <label>
-          <input
-            type="radio"
-            name="성별"
-            value="남"
-            checked={성별 === '남'}
-            onChange={(e) => 확인성별(e.target.value)}
-          />
-          남
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="성별"
-            value="여"
-            checked={성별 === '여'}
-            onChange={(e) => 확인성별(e.target.value)}
-          />
-          여
-        </label>
-
-        <h4>학년</h4>
-        <select value={sel} onChange={(e) => setSel(e.target.value)}>
-          <option value="1학년">1학년</option>
-          <option value="2학년">2학년</option>
-          <option value="3학년">3학년</option>
-          <option value="4학년">4학년</option>
-        </select>
-
-        <h1>취미 선택</h1>
-        {hobbyList.map((item, index) => (
-          <label key={index}>
-            <input
-              type="checkbox"
-              value={item.name}
-              checked={hobby.includes(item.name)}
-              onChange={handleHobbyChange}
-            />
-            {item.name}
-          </label>
+      지역코드
+      <select onChange={e => setArea(e.target.value)}>
+        {areas.map((item, index) => (
+          <option key={index} value={item.idx}>
+            {item.areaName}
+          </option>
         ))}
+      </select>
 
-        <input
-          type="button"
-          value="회원가입"
-          onClick={() => {
-            console.log('아이디:', 아이디);
-            console.log('비밀번호:', 비밀번호);
-            console.log('이메일주소:', 이메일주소);
-            console.log(`학년: ${sel}`);
-            console.log('성별:', 성별);
-            console.log('취미:', hobby.join(', '));
-
-            확인아이디('');
-            확인비밀번호('');
-            확인이메일('');
-            setHobby([]);
-          }}
-        />
-      </div>
-    </>
+        {/* submit은 유효성 검사가 힘들다. */}
+      <input type="button" value="회원가입" onClick={joinAction} />
+    </div>
   );
 }
 
