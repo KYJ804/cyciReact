@@ -8,10 +8,12 @@ import Oup1 from './comp/inp/output01'
 import Ref from './comp/inp/Ref01'
 
 import ProJoin from './comp/pro/Join'
+import ProLogin from './comp/pro/Login'
+import ProItemList from './comp/pro/ItemList'
 
 import Ax1 from './comp/ax/ax01'
 
-import Login from './comp/pro/Login'; // Login 컴포넌트 import
+import Red01 from './comp/red/Red01'
 
 function App() {
   return (
@@ -28,10 +30,11 @@ function App() {
           <Route path={"/ref1"} element={<Ref />} />
 
           <Route path={"/pro1"} element={<ProJoin />} />
+          <Route path={"/login"} element={<ProLogin />} />
+          <Route path={"/itemList"} element={<ProItemList />} />
 
           <Route path={"/ax1"} element={<Ax1 />} />
-
-          <Route path={"/login"} element={<Login />} /> {/* 로그인 경로 추가 */}
+          <Route path={'/red01'} element={<Red01 />} />
         </Routes>
       </BrowserRouter>
     </div>
@@ -61,11 +64,12 @@ function Home() {
       <h4>Axios</h4>
       <Link to="/ax1">AXIOS 사용</Link><br/>
 
-      <h4>과제</h4>
+      <h4>기능</h4>
       <Link to="/pro1">회원가입 창</Link><br/>
+      <Link to="/login">로그인</Link><br/>
+      <Link to="/itemList">아이템 리스트</Link><br/>
 
-      <h4>로그인</h4>
-      <Link to="/login">로그인 창</Link> {/* 로그인 링크 추가 */}
+      <Link to='/red01'>리듀서 01</Link><br/>
     </div>
   )
 }
